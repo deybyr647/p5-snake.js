@@ -117,7 +117,7 @@ let getDirection = () => {
 
 let checkCollision = () => {
     //Check if snake is out of bounds
-    if((head.x >= grid.width || head.y > grid.height) || (head.y < 0 || head.x < 0)){
+    if((head.x > grid.width || head.y > grid.height) || (head.y < 0 || head.x < 0)){
         if(true){
             alert(`You went out of bounds! Your score was ${snake.length - 3}`);
             snakeReset();
