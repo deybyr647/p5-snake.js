@@ -19,6 +19,7 @@ function setup(){
     createCanvas(canvas.width, canvas.height);
     background(0);
     noStroke();
+    frameRate(15);
 }
 
 let snake = [
@@ -57,7 +58,7 @@ let randApple = () =>{
 //Drawing functions
 let drawApple = (x, y) => {
     fill(255, 0, 0)
-    ellipse(x, y, size, size)
+    ellipse(x * size, y * size, size, size)
 }
 
 let drawSnakeHead = (x, y) => {
@@ -88,7 +89,7 @@ window.addEventListener('keydown', e => {
     e.code == 'KeyS' || e.code == 'ArrowDown' ? direction = 'down' : direction = direction;
 
     console.log(direction);
-})
+});
 
 
 
@@ -100,8 +101,50 @@ window.addEventListener('keydown', e => {
 
 
 function draw(){
-    drawApple(apple.x * size, apple.y * size);
+    background(0);
+
+    let head = snake[snake.length - 1];
+
+    //Direction changes based on event handling
+    if (direction === 'left') {
+        let newHead = {x: head.x - 1, y: head.y};
+        snake.push(newHead);
+    }
+    
+    if (direction === 'right') {
+        let newHead = {x: head.x + 1, y: head.y};
+        snake.push(newHead);
+    }
+    
+    if (direction === 'up') {
+        let newHead = {x: head.x, y: head.y - 1};
+        snake.push(newHead);
+    }
+    
+    if (direction === 'down') {
+        let newHead = {x: head.x, y: head.y + 1};
+        snake.push(newHead);
+    }
+    
+    head = snake[snake.length - 1];
+
+    //Check if snake eats the apple
+    head.x === apple.x && head.y === apple.y ? randApple() : snake.shift();
+
+    //Check if snake is out of bounds
+    if((head.x >= grid.width || head.y > grid.height) || (head.y < 0 || head.x < 0)){
+        if(true){
+            alert(`You went out of bounds! Your score was ${snake.length - 3}`);
+            snakeReset();
+            noLoop();
+            //return true;
+
+        }
+    }
+
     drawSnake();
+    drawApple(apple.x, apple.y);
+
 }
 
 function mouseClicked(){
