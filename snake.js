@@ -36,7 +36,7 @@ let apple = {
     y: randInt(grid.height)
 }
 
-//Reset Game State
+//Change Game State
 let snakeReset = () => {
     snake = [
         {x: 3, y: 1},
@@ -47,14 +47,12 @@ let snakeReset = () => {
     direction = 'right';
 }
 
-
 let randApple = () =>{
     apple = {
         x: randInt(grid.width),
         y: randInt(grid.height)
     }
 }
-
 
 //Drawing functions
 let drawApple = (x, y) => {
@@ -141,7 +139,6 @@ let checkCollision = () => {
     }
 
 }
-
 
 function draw(){
     background(0);
