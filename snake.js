@@ -1,4 +1,13 @@
-//Game Setup
+//Sound preload
+let chewingSound;
+let crashSound;
+
+function preload(){
+    chewingSound = loadSound('assets/sounds/chewing.wav');
+    crashSound = loadSound('assets/sounds/crash.wav');
+}
+
+//Canvas/Grid Setup
 let canvas = {
     width: 1500,
     height: 700
@@ -15,7 +24,13 @@ let grid = {
     height: Math.floor(canvas.height / size)
 }
 
+let scoreElem;
+
 function setup(){
+    scoreElem = createDiv('Score: 0');
+    scoreElem.position(20, 20);
+    scoreElem.style('color', 'white');
+
     createCanvas(canvas.width, canvas.height);
     background(0);
     noStroke();
@@ -35,6 +50,8 @@ let apple = {
     x: randInt(grid.width),
     y: randInt(grid.height)
 }
+
+let score = snake.length - 3;
 
 //Change Game State
 let snakeReset = () => {
@@ -82,12 +99,10 @@ let drawSnake = () => {
 
 //Event Handling
 window.addEventListener('keydown', e => {
-    e.code == 'KeyA' || e.code == 'ArrowLeft' ? direction = 'left' : direction = direction;
-    e.code == 'KeyD' || e.code == 'ArrowRight' ? direction = 'right' : direction = direction;
-    e.code == 'KeyW' || e.code == 'ArrowUp' ? direction = 'up' : direction = direction;
-    e.code == 'KeyS' || e.code == 'ArrowDown' ? direction = 'down' : direction = direction;
-
-    console.log(direction);
+    e.code == 'ArrowLeft' ? direction = 'left' : direction = direction;
+    e.code == 'ArrowRight' ? direction = 'right' : direction = direction;
+    e.code == 'ArrowUp' ? direction = 'up' : direction = direction;
+    e.code == 'ArrowDown' ? direction = 'down' : direction = direction;
 });
 
 let getDirection = () => {
@@ -118,11 +133,12 @@ let getDirection = () => {
 let checkCollision = () => {
     //Check if snake is out of bounds
     if((head.x > grid.width || head.y > grid.height) || (head.y < 0 || head.x < 0)){
-        if(true){
-            alert(`You went out of bounds! Your score was ${snake.length - 3}`);
-            snakeReset();
-            noLoop();
-        }
+        crashSound.play();
+        snakeReset();
+        score = snake.length - 3;
+        scoreElem.html('Score: ' + score)
+        noLoop();
+        
     }
 
     //Check if snake is hitting itself
@@ -130,11 +146,12 @@ let checkCollision = () => {
         let point = snake[i];
 
         if(head.x === point.x && head.y === point.y){
-            if(true){
-                alert(`You ate yourself! Your score was ${snake.length - 3} !`);
-                snakeReset();
-                noLoop();
-            }
+            crashSound.play();
+            snakeReset();
+            score = snake.length - 3;
+            scoreElem.html('Score: ' + score)
+            noLoop();
+            
         }
     }
 
@@ -148,7 +165,14 @@ function draw(){
     head = snake[snake.length - 1];
 
     //Check if snake eats the apple
-    head.x === apple.x && head.y === apple.y ? randApple() : snake.shift();
+    if(head.x + size === apple.x + size && head.y + size === apple.y + size){
+        chewingSound.play();
+        randApple();
+        score++;
+        scoreElem.html(`Score: ${score}`);
+    } else{
+        snake.shift();
+    }
 
     checkCollision();
 
