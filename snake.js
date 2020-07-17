@@ -1,14 +1,14 @@
-/*Setup*/
+//Game Setup
 let canvas = {
-    width: document.body.clientWidth,
-    height: 930
+    width: 1500,
+    height: 700
 }
 
-let size = 40;
+let size = 35;
 
 let randInt = (i) => (
     Math.floor(Math.random() * i)
-)
+);
 
 let grid = {
     width: Math.floor(canvas.width / size),
@@ -22,6 +22,7 @@ function setup(){
     frameRate(15);
 }
 
+//Initial Game State
 let snake = [
     {x: 3, y: 1},
     {x: 3, y: 2},
@@ -91,18 +92,7 @@ window.addEventListener('keydown', e => {
     console.log(direction);
 });
 
-
-
-
-
-
-
-
-
-
-function draw(){
-    background(0);
-
+let getDirection = () => {
     let head = snake[snake.length - 1];
 
     //Direction changes based on event handling
@@ -125,28 +115,47 @@ function draw(){
         let newHead = {x: head.x, y: head.y + 1};
         snake.push(newHead);
     }
-    
-    head = snake[snake.length - 1];
+}
 
-    //Check if snake eats the apple
-    head.x === apple.x && head.y === apple.y ? randApple() : snake.shift();
-
+let checkCollision = () => {
     //Check if snake is out of bounds
     if((head.x >= grid.width || head.y > grid.height) || (head.y < 0 || head.x < 0)){
         if(true){
             alert(`You went out of bounds! Your score was ${snake.length - 3}`);
             snakeReset();
             noLoop();
-            //return true;
-
         }
     }
 
-    drawSnake();
-    drawApple(apple.x, apple.y);
+    //Check if snake is hitting itself
+    for(let i = 0; i < snake.length - 1; i++){
+        let point = snake[i];
+
+        if(head.x === point.x && head.y === point.y){
+            if(true){
+                alert(`You ate yourself! Your score was ${snake.length - 3} !`);
+                snakeReset();
+                noLoop();
+            }
+        }
+    }
 
 }
 
-function mouseClicked(){
+
+function draw(){
+    background(0);
+
+    getDirection();
+    
+    head = snake[snake.length - 1];
+
+    //Check if snake eats the apple
+    head.x === apple.x && head.y === apple.y ? randApple() : snake.shift();
+
+    checkCollision();
+
+    drawSnake();
+    drawApple(apple.x, apple.y);
 
 }
